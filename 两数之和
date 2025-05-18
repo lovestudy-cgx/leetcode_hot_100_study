@@ -31,6 +31,6 @@ class Solution:
         for i, num in enumerate(nums):
             if target - num in hashtable:
                 return [hashtable[target - num], i]
-            hashtable[nums[i]] = i
+            hashtable[nums[i]] = i#我们创建了一个字典作为哈希表，思想是当我们遍历索引的时候复杂度是o1，而不是on，这里键是数字，值是索引
         return []
 
