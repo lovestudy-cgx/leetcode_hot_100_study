@@ -1,0 +1,36 @@
+#两数之和
+#自己解法
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        for index0,i in enumerate(nums):
+            num1=nums[index0+1:]
+            for index1,j in enumerate(num1):
+                if i+j==target:
+                    return [index0,index0+index1+1]
+#自己并没有了解复杂度等知识，理所当然想两个for循环，当然即使是这样也很冗余，完全没必要加入num1，然后把nums前面的给删掉，我的脑回路还是挺奇怪的
+#方法1
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        n = len(nums)
+        for i in range(n):
+            for j in range(i + 1, n):
+                if nums[i] + nums[j] == target:
+                    return [i, j]
+        
+        return []
+
+#方法2哈希
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        hashtable = dict()
+        for i, num in enumerate(nums):
+            if target - num in hashtable:
+                return [hashtable[target - num], i]
+            hashtable[nums[i]] = i
+        return []
+
