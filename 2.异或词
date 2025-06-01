@@ -1,0 +1,22 @@
+class Solution(object):
+    def groupAnagrams(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: List[List[str]]
+        """
+        hashtable=collections.defaultdict(list)
+        for words in strs:
+                st=''.join(sorted(words))
+                hashtable[st].append(words)
+        return list(hashtable.values())
+                
+#收获：python里面实现哈希存储的就是dict，而coolections.defaultdict是特殊字典，相较于普通字典，它可以传入一个参数
+比如本题的list，他的牛逼之处在于当没有这个键的时候我自动创建这个键，并且赋予相对应的对象。
+在第十行中hashtable没有st这个键，普通字典用不了append，但这里他就强行默认有一个空的list作为st的值，因此可以append
+
+字符串只有sorted没有sort，且返回是单个字符，因此需要join连接起来（'bca'-->sorted:'a','b','c'-->''.join:'abc'
+
+关于可哈希：因为哈希存储需要你的键（key）是固定的，他才能给你映射到某个固定索引，而可变类型显然不满足要求
+int, str, bool	✅ 是	不可变，hash 值固定
+tuple（所有元素也必须是 hashable）	✅ 是	本身不可变
+list, dict, set	❌ 否	可变，会变动
