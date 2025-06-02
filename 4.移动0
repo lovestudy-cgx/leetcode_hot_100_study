@@ -1,0 +1,14 @@
+class Solution:
+    def moveZeroes(self, nums: List[int]) -> None:
+        n = len(nums)
+        left = right = 0
+        while right < n:
+            if nums[right] != 0:
+                nums[left], nums[right] = nums[right], nums[left]
+                left += 1
+            right += 1
+以上是答案。
+nums[left], nums[right] = nums[right], nums[left]，这是python的语法糖，他自动内部进行元组解包，
+也就是先在右边生成一个tuple={right,left),然后原子操作直接让等式左边的left=right，right=left。更快捷
+这也是python的一个优势
+这个算法就是用left right两个指针，其实就是数字，慢慢蠕动来交换
