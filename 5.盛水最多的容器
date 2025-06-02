@@ -1,0 +1,35 @@
+class Solution(object):
+    def maxArea(self, height):
+        """
+        :type height: List[int]
+        :rtype: int
+        """
+        square=0
+        for index,i in enumerate(height):
+            for indexj,j in enumerate(height[index:]):
+                square1=indexj*min(i,j)#indexj就是二者的宽度
+                square=max(square,square1)
+        return square
+对的，但是通过不了复杂案例，时间超出（时间复杂度oN方）
+思路：就是想着我肯定得固定两个柱子来计算min高度以及二者的宽度，所以肯定要两重循环。
+
+答案：
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        l, r = 0, len(height) - 1
+        ans = 0
+        while l < r:
+            area = min(height[l], height[r]) * (r - l)
+            ans = max(ans, area)
+            if height[l] <= height[r]:
+                l += 1
+            else:
+                r -= 1
+        return ans
+
+  要学会r=len(height)-1，然后知道判断条件是l<r，这种基操要熟悉
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/container-with-most-water/solutions/207215/sheng-zui-duo-shui-de-rong-qi-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
