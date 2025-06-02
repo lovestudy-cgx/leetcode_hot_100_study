@@ -1,0 +1,29 @@
+class Solution(object):
+    def longestConsecutive(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        hashtable=collections.defaultdict(list)
+        list1=sorted(nums)
+        for index,i in enumerate(list1):
+            hashtable[i-index].append(i)
+        return max(len(value) for value in hashtable.values())
+      语法没啥毛病，但是有个问题：当在中间的数字重复时，他就不准：01123
+      数字-index变成00-1-1-1，因此最高的values数量为3不为4.
+
+      改进：
+  class Solution(object):
+    def longestConsecutive(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        hashtable=collections.defaultdict(list)
+        num1=set(nums)#去重
+
+        list1=sorted(num1)
+        for index,i in enumerate(list1):
+            hashtable[i-index].append(i)
+        return max(len(value) for value in hashtable.values())
+    本体收获：set和dict一样都是hash存储，因为不可变
