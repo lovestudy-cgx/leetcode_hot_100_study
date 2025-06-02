@@ -1,1 +1,21 @@
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        if not height:#意思是如果height为空，对于height，如果他是int，float，那么就是判断它是否为0，如果是存储结构，那就是看他是否为空
+            return 0
+        
+        n = len(height)
+        leftMax = [height[0]] + [0] * (n - 1)#先从左向右扫描最大值（有点像分布函数，因为不会减少）
+        for i in range(1, n):
+            leftMax[i] = max(leftMax[i - 1], height[i])#记录当前的高度和前一个存储的最大值中的较大者
 
+        rightMax = [0] * (n - 1) + [height[n - 1]]
+        for i in range(n - 2, -1, -1):
+            rightMax[i] = max(rightMax[i + 1], height[i])#从右向左扫一遍
+
+        ans = sum(min(leftMax[i], rightMax[i]) - height[i] for i in range(n))#先列表表达式对left，right，height求值然后综合相加。找到左右最大挡板中的较小那个减去他的高度就是存储水的面积
+        return ans
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/trapping-rain-water/solutions/692342/jie-yu-shui-by-leetcode-solution-tuvc/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
