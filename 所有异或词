@@ -24,7 +24,20 @@ class Solution:
 
         return ans
 他这个思路就是我开始固定一个窗口，从0开始，然后滑动窗口，前面的退出，后面的进入（采用count计数）
-作者：力扣官方题解
-链接：https://leetcode.cn/problems/find-all-anagrams-in-a-string/solutions/1123971/zhao-dao-zi-fu-chuan-zhong-suo-you-zi-mu-xzin/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+我写的如下一坨，没写出来的原因是：想模仿前面的用哈希表存储，然后每滑动窗口，就把对应key下面的value给去掉，但是手法显然不够。
+class Solution(object):
+    def findAnagrams(self, s, p):
+        """
+        :type s: str
+        :type p: str
+        :rtype: List[int]
+        """
+        hashdict=collections.defaultdict(list)
+        s1,p1=len(s),len(p)
+        for i in range(s1):
+            if i+p1>s1:
+                break
+            for j in range()
+            hashdict[s[i]].append(1)
