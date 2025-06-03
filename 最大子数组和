@@ -1,0 +1,35 @@
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        n=len(nums)
+        max0=max(nums)
+        
+        for l in range (2,n+1):
+            for i in range(n):
+                count=0
+                if i+l>n:
+                    break
+                else:
+                    for j in range(i,i+l):
+                        count+=nums[j] 
+                    max0=max(max0,count)
+        return max0
+
+自己的解法，复杂度N三次方，无敌了
+
+答案：修改成python之后，核心就是pre=max(pre+x,x)动态规划：以x结尾的序列最大值：要么自己本身，要么自己加上上一次的最大值
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        pre = 0
+        max_ans = nums[0]
+        for x in nums:
+            pre = max(pre + x, x)     # 当前子数组和：要么扩展前面的 pre，要么从 x 重新开始
+            max_ans = max(max_ans, pre)  # 记录最大值
+        return max_ans
