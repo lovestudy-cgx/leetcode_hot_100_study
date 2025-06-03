@@ -1,0 +1,30 @@
+class Solution:
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        s_len, p_len = len(s), len(p)
+        
+        if s_len < p_len:
+            return []
+
+        ans = []
+        s_count = [0] * 26
+        p_count = [0] * 26
+        for i in range(p_len):
+            s_count[ord(s[i]) - 97] += 1
+            p_count[ord(p[i]) - 97] += 1
+
+        if s_count == p_count:#列表可以直接判断是否相等，这首先判断开头是不是
+            ans.append(0)
+
+        for i in range(s_len - p_len):
+            s_count[ord(s[i]) - 97] -= 1
+            s_count[ord(s[i + p_len]) - 97] += 1
+            
+            if s_count == p_count:
+                ans.append(i + 1)
+
+        return ans
+他这个思路就是我开始固定一个窗口，从0开始，然后滑动窗口，前面的退出，后面的进入（采用count计数）
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/find-all-anagrams-in-a-string/solutions/1123971/zhao-dao-zi-fu-chuan-zhong-suo-you-zi-mu-xzin/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
