@@ -1,0 +1,78 @@
+个人尝试战损版
+class Solution(object):
+    def rotate(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        nums.append([0]*k)#多个元素的话用extend
+        n=len(nums)
+        for i in (n-1,-1,-1):#range忘加
+            nums[i+1]=nums[i]
+        for i in(0,k):
+            nums[i]=nums[i+n]
+        return nums
+
+修改版
+extend，append等常见列表操作是直接在原列表上面创建的，如果写xxx=nums.extend会让变量赋值为none。所以没必要创建新变量
+修改之后的问题在于：如果源列表长度<k,那么由于我自定义用0填充，所以最后会有一些不必要的0，只能说通过了70%的例子
+class Solution(object):
+    def rotate(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        if k==0:
+            return nums
+        n=len(nums)
+        nums.extend([0]*k)
+        for i in range(n-1,-1,-1):
+            nums[i+k]=nums[i]
+        for i in range(0,k):
+            nums[i]=nums[i+n]
+        del nums[-k:]
+        return nums
+
+✅ 一张表看懂：常见原地修改方法（返回值为 None）
+操作方法	用途说明	返回值	示例
+append(x)	在列表末尾添加一个元素	None	lst.append(5)
+extend(iterable)	将一个可迭代对象的元素逐一加入列表	None	lst.extend([1, 2, 3])
+insert(i, x)	在索引 i 处插入元素 x	None	lst.insert(2, 10)
+remove(x)	删除第一个值为 x 的元素	None	lst.remove('a')
+pop(i=-1)	删除并返回索引 i 的元素	✅ 返回值	val = lst.pop()
+clear()	清空列表	None	lst.clear()
+sort()	对列表原地排序	None	lst.sort()
+reverse()	原地反转列表	None	lst.reverse()
+
+
+答案1：完全不需要开辟新的几个格子，直接一次性操作就行了。而且要mod，因为可能会遇到k是n的几倍，你不好在原数组上操作
+class Solution:
+    def rotate(self, nums, k):
+        n = len(nums)
+        newArr = [0] * n
+        for i in range(n):
+            newArr[(i + k) % n] = nums[i]
+        nums[:] = newArr[:]
+
+答案2：递归（最好理解）：先整体翻转，再翻转两头就好
+class Solution:
+    def reverse(self, nums, start, end):
+        while start < end:
+            nums[start], nums[end] = nums[end], nums[start]
+            start += 1
+            end -= 1
+    
+    def rotate(self, nums, k):
+        k %= len(nums)
+        self.reverse(nums, 0, len(nums) - 1)
+        self.reverse(nums, 0, k - 1)
+        self.reverse(nums, k, len(nums) - 1)
+我们以 n=7，k=3 为例进行如下展示：
+
+操作	结果
+原始数组	1 2 3 4 5 6 7
+翻转所有元素	7 6 5 4 3 2 1
+翻转 [0,kmodn−1] 区间的元素	5 6 7 4 3 2 1
+翻转 [kmodn,n−1] 区间的元素	5 6 7 1 2 3 4
