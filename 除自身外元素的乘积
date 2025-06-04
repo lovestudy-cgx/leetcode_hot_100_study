@@ -1,0 +1,26 @@
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        length = len(nums)
+        answer = [0]*length
+        
+        # answer[i] 表示索引 i 左侧所有元素的乘积
+        # 因为索引为 '0' 的元素左侧没有元素， 所以 answer[0] = 1
+        answer[0] = 1
+        for i in range(1, length):
+            answer[i] = nums[i - 1] * answer[i - 1]
+        
+        # R 为右侧所有元素的乘积
+        # 刚开始右边没有元素，所以 R = 1
+        R = 1;
+        for i in reversed(range(length)):# 和 for i in range(n-1, -1, -1) ​功能上是等价的
+            # 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R
+            answer[i] = answer[i] * R
+            # R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上
+            R *= nums[i]#这里显然可以发现，这一行和上一行的顺序不能反过来
+        
+        return answer
+这一题思想其实就是，计算机最擅长连续的，规模性的运算，不喜欢跳过某个值运算，因此哪怕我设置两次循环，或者两个指针，算到我要算的元素为止就好了这顶多算o2n，但是你扣掉中间的那个数做双重循环那就是on2
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/product-of-array-except-self/solutions/272369/chu-zi-shen-yi-wai-shu-zu-de-cheng-ji-by-leetcode-/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
