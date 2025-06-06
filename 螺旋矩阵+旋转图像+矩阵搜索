@@ -1,0 +1,291 @@
+class Solution(object):
+    def spiralOrder(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: List[int]
+        """
+        m=len(matrix)
+        n=len(matrix[0])
+        list1=[]
+        #递归
+        i,j=0,0
+        while(i<m):
+            if j==n:
+                j=n-1
+                while(j<n):
+                    list1.append(matrix[i][j])
+                    j+=1
+            i+=1
+        i-=1
+        if m==n and m==1:
+            return list1
+        for j in range(n-1,-1,-1):
+            list1.append(matrix[i][j])
+        self.spiralOrder(matrix[1:m-1][0:])
+一坨，逻辑错了：我想去掉3/4圈，不对
+
+评论区还有牛的方便理解的：
+class Solution:
+    def spiralOrder(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: List[int]
+        """
+        ans = []
+        m, n = len(matrix), len(matrix[0])
+        left, right, top, bottom = 0, n - 1, 0, m - 1
+
+        while left <= right and top <= bottom:
+            # 从左到右
+            for i in range(left, right + 1):
+                ans.append(matrix[top][i])
+            top += 1
+
+            # 从上到下
+            for i in range(top, bottom + 1):
+                ans.append(matrix[i][right])
+            right -= 1
+
+            # 从右到左
+            if top <= bottom:
+                for i in range(right, left - 1, -1):
+                    ans.append(matrix[bottom][i])
+                bottom -= 1
+
+            # 从下到上
+            if left <= right:
+                for i in range(bottom, top - 1, -1):
+                    ans.append(matrix[i][left])
+                left += 1
+
+        return ans
+
+官网答案：
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]:
+            return list()
+        
+        rows, columns = len(matrix), len(matrix[0])
+        visited = [[False] * columns for _ in range(rows)]
+        total = rows * columns
+        order = [0] * total
+
+        directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+        row, column = 0, 0
+        directionIndex = 0
+        for i in range(total):
+            order[i] = matrix[row][column]#将二维转化为1维记录
+            visited[row][column] = True#标记，把经过的值从F改成T
+            nextRow, nextColumn = row + directions[directionIndex][0], column + directions[directionIndex][1]#子列表中第一个是行，第二个是列，所以第一次循环相当于列加1
+            if not (0 <= nextRow < rows and 0 <= nextColumn < columns and not visited[nextRow][nextColumn]):#这么多条件的对立：德摩根率就是这些条件不满足的并集（or)；not visited[nextRow][nextColumn] 是什么意思？
+#这一句逻辑：如果下一个位置还没有被访问过（也就是 False），那就可以继续往那个方向走
+                directionIndex = (directionIndex + 1) % 4#因为很可能不止一圈
+            row += directions[directionIndex][0]#第二行里面的元素，只加行，第一行是只加列，第三行是只减列，第四次只减行
+            column += directions[directionIndex][1]
+        return order
+
+
+
+旋转图像（原有矩阵转90度）：
+官方解法（难点在于要求原地操作，空间o1
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        for i in range(n // 2):
+            for j in range((n + 1) // 2):
+                matrix[i][j], matrix[n - j - 1][i], matrix[n - i - 1][n - j - 1], matrix[j][n - i - 1] \
+                    = matrix[n - j - 1][i], matrix[n - i - 1][n - j - 1], matrix[j][n - i - 1], matrix[i][j]
+翻转式解法：
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        # 水平翻转
+        for i in range(n // 2):
+            for j in range(n):
+                matrix[i][j], matrix[n - i - 1][j] = matrix[n - i - 1][j], matrix[i][j]
+        # 主对角线翻转
+        for i in range(n):
+            for j in range(i):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+
+如果不考虑空间，那么
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        # Python 这里不能 matrix_new = matrix 或 matrix_new = matrix[:] 因为是引用拷贝（软拷贝）
+        matrix_new = [[0] * n for _ in range(n)]
+        for i in range(n):
+            for j in range(n):
+                matrix_new[j][n - i - 1] = matrix[i][j]
+        # 不能写成 matrix = matrix_new
+        matrix[:] = matrix_new
+
+在 Python 中：
+
+所有的可变数据结构（如 list、dict、set、自定义类对象等）——你在函数中用 变量 = 新对象 的赋值，只是修改了变量的指向，不会影响外部原变量的绑定。
+
+如果你想影响外部变量绑定的对象内容（不改变绑定），你必须修改“原对象的内部状态”，例如使用 [:]、.append()、.update() 之类的原地操作。
+
+✅ 你的第二个问题：能否举几个例子说明？
+当然可以！我们用 list、dict、set 都举例。
+
+🧪 例子1：list（你刚刚遇到的情况）
+python
+复制
+编辑
+def change_list(lst):
+    lst = [9, 9, 9]  # 改了引用，外部看不到
+lst1 = [1, 2, 3]
+change_list(lst1)
+print(lst1)  # ❌ [1, 2, 3] 没变！
+✅ 正确写法：
+
+python
+复制
+编辑
+def change_list(lst):
+    lst[:] = [9, 9, 9]  # 原地改内容
+lst1 = [1, 2, 3]
+change_list(lst1)
+print(lst1)  # ✅ [9, 9, 9]
+🧪 例子2：dict
+python
+
+def change_dict(d):
+    d = {'a': 100}  # 改了引用
+d1 = {'a': 1}
+change_dict(d1)
+print(d1)  # ❌ {'a': 1}
+✅ 正确写法：
+
+python
+
+def change_dict(d):
+    d['a'] = 100  # 原地修改键值
+d1 = {'a': 1}
+change_dict(d1)
+print(d1)  # ✅ {'a': 100}
+🧪 例子3：set
+python
+
+def change_set(s):
+    s = {99}  # 改了引用
+s1 = {1, 2, 3}
+change_set(s1)
+print(s1)  # ❌ {1, 2, 3}
+✅ 正确写法：
+
+python
+
+def change_set(s):
+    s.clear()
+    s.add(99)
+s1 = {1, 2, 3}
+change_set(s1)
+print(s1)  # ✅ {99}
+
+
+这个问题问得太棒了！list 和 list[:] 看起来很像，但它们确实有本质上的区别，尤其在赋值和修改操作中表现得很明显。让我详细帮你解释下：
+
+1. list 是什么？
+假设有一个列表：
+
+python
+复制
+编辑
+a = [1, 2, 3]
+b = a
+b = a 表示变量 b 和 a 都指向同一个列表对象。
+
+任何通过 b 或 a 进行的列表内容修改，都会反映到另一个变量上，因为它们指向的是同一个对象。
+
+比如：
+
+python
+复制
+编辑
+b[0] = 9
+print(a)  # 输出 [9, 2, 3]
+2. list[:] 是什么？
+list[:] 代表对列表进行切片操作，复制出列表的一个“浅拷贝”。
+
+也就是说，list[:] 产生的是一个新的列表对象，这个新列表和原列表的内容一样（元素引用也一样），但它们是不同的对象。
+
+例子：
+
+python
+复制
+编辑
+a = [1, 2, 3]
+b = a[:]  # 复制了一个新的列表对象
+b[0] = 9
+print(a)  # 仍然是 [1, 2, 3]
+print(b)  # [9, 2, 3]
+3. 具体区别总结
+操作	意义	修改时影响原列表吗？
+b = a	b和a指向同一个列表对象	会，修改b也会影响a
+b = a[:]	创建了一个新的列表对象（浅拷贝）	不会，修改b不会影响a
+
+4. 为什么切片是浅拷贝？
+切片是浅拷贝，也就是说只复制了最外层列表，里面的元素如果是可变对象（如子列表），它们还是共享同一个引用。
+
+例如：
+
+python
+复制
+编辑
+a = [[1, 2], [3, 4]]
+b = a[:]
+
+b[0][0] = 9
+print(a)  # 输出 [[9, 2], [3, 4]]
+这是因为切片复制的是列表的外层结构，但内部的子列表引用不变。
+
+
+
+矩阵搜索：（评论转角45度转化成树来看）
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        i, j = len(matrix) - 1, 0
+        while i >= 0 and j < len(matrix[0]):
+            if matrix[i][j] > target: i -= 1
+            elif matrix[i][j] < target: j += 1
+            else: return True
+        return False
+
+作者：Krahets
+链接：https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/2361487/240-sou-suo-er-wei-ju-zhen-iitan-xin-qin-7mtf/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+法二：二分法（需要掌握）
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        for row in matrix:
+            idx = bisect.bisect_left(row, target)
+            if idx < len(row) and row[idx] == target:
+                return True
+        return False
+
+Python 的 bisect 模块是用来在有序列表中进行二分查找和插入的。它常用于处理 排好序的列表，可以高效地查找或插入某个值的位置。
+
+常用函数：
+
+函数	说明
+bisect_left(a, x)	找到 x 应插入到 a 中的位置，使得插入后 a 仍然有序；如果 x 已存在，插入在左边。
+bisect_right(a, x) 或 bisect(a, x)	插入在右边（也就是排在现有相等元素后）。
+insort_left(a, x)	实际执行插入操作（左侧）
+insort_right(a, x)	实际执行插入操作（右侧）
+
+🔍 二、例子解释 bisect_left
+python
+复制
+编辑
+import bisect
+
+a = [1, 3, 5, 7]
+x = 4
+idx = bisect.bisect_left(a, x)
+print(idx)  # 输出 2，因为 4 应该插入在索引 2（即 3 和 5 之间）
