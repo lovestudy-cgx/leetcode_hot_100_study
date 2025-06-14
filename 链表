@@ -1,0 +1,117 @@
+相交链表
+
+自己写的错误代码：
+class Solution(object):
+    def getIntersectionNode(self, headA, headB):
+        """
+        :type head1, head1: ListNode
+        :rtype: ListNode
+        """
+        if headA==None or headB==None:
+            return null
+        pa,pb=headA,headB
+        while pa:
+            pa=pa.next
+        pa=headB
+        while pb:
+            pb=pb.next
+        pb=headA
+        pa,pb=headA,headB
+        while pa!=pb:
+            pa=pa.next
+            pb=pb.next
+        return pa
+逻辑上想表达通过把A表末尾连到B表头，B末尾连到A表头，这样都经过A+B同时达到第一个相同的节点，如果没有就表示不相交
+但问题是我在表示A B的末尾时，赋值到对方的开头，但是紧接着pa,pb=heada,headb把我刚刚的逻辑又给初始化了。
+
+法一：因为题目不包含环，所以只有1个节点，可以这么写
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        visited = set()  # 用集合存储链表A的节点
+        temp = headA
+        while temp is not None:  # 遍历链表A，记录所有节点
+            visited.add(temp)
+            temp = temp.next
+        
+        temp = headB
+        while temp is not None:  # 遍历链表B，检查是否有节点在集合中
+            if temp in visited:
+                return temp  # 找到交点
+            temp = temp.next
+        
+        return None  # 无交点
+
+法二：双指针法
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        if not headA or not headB:
+            return None
+        
+        pA, pB = headA, headB
+        while pA != pB:
+            # pA 遍历完链表A后切换到链表B的头节点
+            pA = pA.next if pA else headB
+            # pB 遍历完链表B后切换到链表A的头节点
+            pB = pB.next if pB else headA
+        
+        return pA  # 返回交点（或 None）
+
+----------------------------------------------------------
+反转链表
+自己的：
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        pa=head
+        if pa.next==None:
+            return pa
+        while pa.next:
+            before=pa
+            pb=before.next
+            pa=pa.next.next
+            before=pa.next.next#pa为最后一个非空节点
+确实做不到逻辑通畅
+
+法一：变量储存
+# 定义链表节点类
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        prev = None          # 初始化 prev 为 None
+        curr = head          # 初始化 curr 为头节点 head
+        
+        while curr is not None:  # 当 curr 不为 None 时继续循环
+            next_node = curr.next  # 临时保存 curr 的下一个节点
+            curr.next = prev       # 反转当前节点的指针，指向 prev
+            prev = curr            # 移动 prev 到当前节点 curr
+            curr = next_node       # 移动 curr 到下一个节点 next_node
+        
+        return prev  # 循环结束后，prev 指向新的头节点
+
+法二：递归
+# 定义链表节点类
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        # 基线条件：如果链表为空或只有一个节点，直接返回头节点
+        if head is None or head.next is None:
+            return head
+        
+        # 递归反转剩余链表，newHead 是反转后的新头节点
+        newHead = self.reverseList(head.next)
+        
+        # 将当前节点的下一个节点的 next 指针指向当前节点（反转指针方向）
+        head.next.next = head
+        
+        # 断开当前节点的 next 指针，防止形成循环
+        head.next = None
+        
+        # 返回新的头节点（即原链表的尾节点）
+        return newHead
